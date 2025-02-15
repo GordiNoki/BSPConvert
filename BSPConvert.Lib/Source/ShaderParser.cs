@@ -179,7 +179,7 @@ namespace BSPConvert.Lib
 				return bundle;
 			}
 
-			bundle.imageAnimationSpeed = float.Parse(split[1]);
+			bundle.imageAnimationSpeed = float.Parse(split[1], CultureInfo.InvariantCulture);
 
 			for (var i = 2; i < split.Length; i++)
 			{
@@ -214,9 +214,9 @@ namespace BSPConvert.Lib
 				return null;
 			}
 
-			if (!float.TryParse(split[2], out fogParms.color.X) ||
-				!float.TryParse(split[3], out fogParms.color.Y) ||
-				!float.TryParse(split[4], out fogParms.color.Z))
+			if (!float.TryParse(split[2], CultureInfo.InvariantCulture, out fogParms.color.X) ||
+				!float.TryParse(split[3], CultureInfo.InvariantCulture, out fogParms.color.Y) ||
+				!float.TryParse(split[4], CultureInfo.InvariantCulture, out fogParms.color.Z))
 			{
 				Debug.WriteLine("Warning: Missing vector3 element in shader: " + shaderFile);
 				return null;
@@ -228,7 +228,7 @@ namespace BSPConvert.Lib
 				return null;
 			}
 
-			if (!float.TryParse(split[6], out fogParms.depthForOpaque))
+			if (!float.TryParse(split[6], CultureInfo.InvariantCulture, out fogParms.depthForOpaque))
 			{
 				Debug.WriteLine("Warning: Missing parm for 'fogParms' keyword in shader: " + shaderFile);
 				return null;
@@ -414,9 +414,9 @@ namespace BSPConvert.Lib
 			}
 
 			return new Vector3(
-				float.Parse(split[1]),
-				float.Parse(split[2]),
-				float.Parse(split[3]));
+				float.Parse(split[1], CultureInfo.InvariantCulture),
+				float.Parse(split[2], CultureInfo.InvariantCulture),
+				float.Parse(split[3], CultureInfo.InvariantCulture));
 		}
 
 		private WaveForm ParseWaveform(ArraySegment<string> split)
@@ -424,10 +424,10 @@ namespace BSPConvert.Lib
 			var wave = new WaveForm();
 
 			wave.func = NameToGenFunc(split[0]);
-			float.TryParse(split[1], out wave.base_);
-			float.TryParse(split[2], out wave.amplitude);
-			float.TryParse(split[3], out wave.phase);
-			float.TryParse(split[4], out wave.frequency);
+			float.TryParse(split[1], CultureInfo.InvariantCulture, out wave.base_);
+			float.TryParse(split[2], CultureInfo.InvariantCulture, out wave.amplitude);
+			float.TryParse(split[3], CultureInfo.InvariantCulture, out wave.phase);
+			float.TryParse(split[4], CultureInfo.InvariantCulture, out wave.frequency);
 
 			return wave;
 		}
@@ -447,7 +447,7 @@ namespace BSPConvert.Lib
 					{
 						stage.alphaGen = AlphaGen.AGEN_CONST;
 
-						if (float.TryParse(split[2], out var alpha))
+						if (float.TryParse(split[2], CultureInfo.InvariantCulture, out var alpha))
 							stage.constantColor[3] = (byte)(alpha * 255);
 						break;
 					}
@@ -535,10 +535,10 @@ namespace BSPConvert.Lib
 				return texModInfo;
 			}
 			
-			float.TryParse(tcMod[2], out texModInfo.wave.base_);
-			float.TryParse(tcMod[3], out texModInfo.wave.amplitude);
-			float.TryParse(tcMod[4], out texModInfo.wave.phase);
-			float.TryParse(tcMod[5], out texModInfo.wave.frequency);
+			float.TryParse(tcMod[2], CultureInfo.InvariantCulture, out texModInfo.wave.base_);
+			float.TryParse(tcMod[3], CultureInfo.InvariantCulture, out texModInfo.wave.amplitude);
+			float.TryParse(tcMod[4], CultureInfo.InvariantCulture, out texModInfo.wave.phase);
+			float.TryParse(tcMod[5], CultureInfo.InvariantCulture, out texModInfo.wave.frequency);
 			
 			texModInfo.type = TexMod.TMOD_TURBULENT;
 			
@@ -554,8 +554,8 @@ namespace BSPConvert.Lib
 				return texModInfo;
 			}
 			
-			float.TryParse(tcMod[2], out texModInfo.scale[0]);
-			float.TryParse(tcMod[3], out texModInfo.scale[1]);
+			float.TryParse(tcMod[2], CultureInfo.InvariantCulture, out texModInfo.scale[0]);
+			float.TryParse(tcMod[3], CultureInfo.InvariantCulture, out texModInfo.scale[1]);
 			
 			texModInfo.type = TexMod.TMOD_SCALE;
 			
@@ -571,8 +571,8 @@ namespace BSPConvert.Lib
 				return texModInfo;
 			}
 			
-			float.TryParse(tcMod[2], out texModInfo.scroll[0]);
-			float.TryParse(tcMod[3], out texModInfo.scroll[1]);
+			float.TryParse(tcMod[2], CultureInfo.InvariantCulture, out texModInfo.scroll[0]);
+			float.TryParse(tcMod[3], CultureInfo.InvariantCulture, out texModInfo.scroll[1]);
 			
 			texModInfo.type = TexMod.TMOD_SCROLL;
 			
@@ -589,10 +589,10 @@ namespace BSPConvert.Lib
 			}
 			
 			texModInfo.wave.func = NameToGenFunc(tcMod[2]);
-			float.TryParse(tcMod[3], out texModInfo.wave.base_);
-			float.TryParse(tcMod[4], out texModInfo.wave.amplitude);
-			float.TryParse(tcMod[5], out texModInfo.wave.phase);
-			float.TryParse(tcMod[6], out texModInfo.wave.frequency);
+			float.TryParse(tcMod[3], CultureInfo.InvariantCulture, out texModInfo.wave.base_);
+			float.TryParse(tcMod[4], CultureInfo.InvariantCulture, out texModInfo.wave.amplitude);
+			float.TryParse(tcMod[5], CultureInfo.InvariantCulture, out texModInfo.wave.phase);
+			float.TryParse(tcMod[6], CultureInfo.InvariantCulture, out texModInfo.wave.frequency);
 			
 			texModInfo.type = TexMod.TMOD_STRETCH;
 			
@@ -608,12 +608,12 @@ namespace BSPConvert.Lib
 				return texModInfo;
 			}
 			
-			float.TryParse(tcMod[2], out texModInfo.matrix[0][0]);
-			float.TryParse(tcMod[3], out texModInfo.matrix[0][1]);
-			float.TryParse(tcMod[4], out texModInfo.matrix[1][0]);
-			float.TryParse(tcMod[5], out texModInfo.matrix[1][1]);
-			float.TryParse(tcMod[6], out texModInfo.translate[0]);
-			float.TryParse(tcMod[7], out texModInfo.translate[1]);
+			float.TryParse(tcMod[2], CultureInfo.InvariantCulture, out texModInfo.matrix[0][0]);
+			float.TryParse(tcMod[3], CultureInfo.InvariantCulture, out texModInfo.matrix[0][1]);
+			float.TryParse(tcMod[4], CultureInfo.InvariantCulture, out texModInfo.matrix[1][0]);
+			float.TryParse(tcMod[5], CultureInfo.InvariantCulture, out texModInfo.matrix[1][1]);
+			float.TryParse(tcMod[6], CultureInfo.InvariantCulture, out texModInfo.translate[0]);
+			float.TryParse(tcMod[7], CultureInfo.InvariantCulture, out texModInfo.translate[1]);
 			
 			texModInfo.type = TexMod.TMOD_TRANSFORM;
 			
@@ -629,7 +629,7 @@ namespace BSPConvert.Lib
 				return texModInfo;
 			}
 			
-			texModInfo.rotateSpeed = float.Parse(tcMod[2]);
+			texModInfo.rotateSpeed = float.Parse(tcMod[2], CultureInfo.InvariantCulture);
 			
 			texModInfo.type = TexMod.TMOD_ROTATE;
 			

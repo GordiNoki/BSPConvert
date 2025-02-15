@@ -2,6 +2,7 @@
 using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -207,7 +208,7 @@ namespace BSPConvert.Lib
 
 		private void ConvertFuncRotating(Entity funcRotating)
 		{
-			if (!float.TryParse(funcRotating["speed"], out var speed))
+			if (!float.TryParse(funcRotating["speed"], CultureInfo.InvariantCulture, out var speed))
 				speed = 100;
 			
 			funcRotating["spawnflags"] = "1";
@@ -228,9 +229,9 @@ namespace BSPConvert.Lib
 			var moveDistance = 0f;
 			var brushThickness = GetBrushThickness(entity);
 
-			if (float.TryParse(entity["height"], out var height))
+			if (float.TryParse(entity["height"], CultureInfo.InvariantCulture, out var height))
 				moveDistance = height + brushThickness;
-			else if (float.TryParse(entity["lip"], out var lip))
+			else if (float.TryParse(entity["lip"], CultureInfo.InvariantCulture, out var lip))
 				moveDistance = -(lip - q3LipMod - (brushThickness * 2));
 
 			if (string.IsNullOrEmpty(entity.Name))
@@ -300,7 +301,7 @@ namespace BSPConvert.Lib
 			if (string.IsNullOrEmpty(door["wait"]))
 				door["wait"] = "2";
 			
-			if (float.TryParse(door["health"], out _))
+			if (float.TryParse(door["health"], CultureInfo.InvariantCulture, out _))
 			{
 				door.ClassName = "func_button"; // Health is obsolete on func_door, maybe fix in engine and update this
 				ConvertFuncButton(door);
@@ -353,7 +354,7 @@ namespace BSPConvert.Lib
 
 		private static void SetButtonFlags(Entity button)
 		{
-			if (!float.TryParse(button["speed"], out var speed))
+			if (!float.TryParse(button["speed"], CultureInfo.InvariantCulture, out var speed))
 				speed = 40;
 
 			var spawnflags = 0;
@@ -361,7 +362,7 @@ namespace BSPConvert.Lib
 			if ((speed == -1 || speed >= 9999) && (button["wait"] == "-1")) // TODO: Add customization setting for the upper bounds potentially?
 				spawnflags |= (int)FuncButtonFlags.DontMove;
 
-			if (!float.TryParse(button["health"], out var health) || button["health"] == "0")
+			if (!float.TryParse(button["health"], CultureInfo.InvariantCulture, out var health) || button["health"] == "0")
 				spawnflags |= (int)FuncButtonFlags.TouchActivates;
 			else
 				spawnflags |= (int)FuncButtonFlags.DamageActivates;
@@ -371,7 +372,7 @@ namespace BSPConvert.Lib
 
 		private static void SetMoveDir(Entity entity)
 		{
-			if (!float.TryParse(entity["angle"], out var angle))
+			if (!float.TryParse(entity["angle"], CultureInfo.InvariantCulture, out var angle))
 				return;
 
 			if (angle == -1) // UP
@@ -536,7 +537,7 @@ namespace BSPConvert.Lib
 			if (!sourceEntities.Any(x => x.ClassName == "math_counter")) // Check if math_counter exists
 				CreateMathCounter();
 
-			if (!float.TryParse(targetScore["count"], out var count))
+			if (!float.TryParse(targetScore["count"], CultureInfo.InvariantCulture, out var count))
 				count = 1;
 
 			ModifyMathCounter(entity, output, "Add", count.ToString(), delay);
@@ -680,9 +681,9 @@ namespace BSPConvert.Lib
 
 		private float ConvertTargetDelay(Entity targetDelay)
 		{
-			if (float.TryParse(targetDelay["delay"], out var delay))
+			if (float.TryParse(targetDelay["delay"], CultureInfo.InvariantCulture, out var delay))
 				return delay;
-			else if (float.TryParse(targetDelay["wait"], out var wait))
+			else if (float.TryParse(targetDelay["wait"], CultureInfo.InvariantCulture, out var wait))
 				return wait;
 			else
 				return 1;
@@ -724,20 +725,20 @@ namespace BSPConvert.Lib
 
 			if (!string.IsNullOrEmpty(targetPush["angles"]))
 				angles = targetPush["angles"];
-			else if (float.TryParse(targetPush["angle"], out var angle))
+			else if (float.TryParse(targetPush["angle"], CultureInfo.InvariantCulture, out var angle))
 				angles = $"0 {angle} 0";
 
 			var angleString = angles.Split(' ');
 
-			var pitchDegrees = float.Parse(angleString[0]);
-			var yawDegrees = float.Parse(angleString[1]);
+			var pitchDegrees = float.Parse(angleString[0], CultureInfo.InvariantCulture);
+			var yawDegrees = float.Parse(angleString[1], CultureInfo.InvariantCulture);
 
 			var launchDir = ConvertAnglesToVector(pitchDegrees, yawDegrees);
 
-			if (!float.TryParse(targetPush["speed"], out var speed))
+			if (!float.TryParse(targetPush["speed"], CultureInfo.InvariantCulture, out var speed))
 				speed = 1000;
 			else
-				speed = float.Parse(targetPush["speed"]);
+				speed = float.Parse(targetPush["speed"], CultureInfo.InvariantCulture);
 
 			var launchVector = launchDir * speed;
 			return $"{launchVector.X} {launchVector.Y} {launchVector.Z}";
@@ -1016,7 +1017,7 @@ namespace BSPConvert.Lib
 		private void GiveWeaponAmmoOnOutput(Entity entity, Entity weaponEnt, string output, float delay)
 		{
 			var count = ConvertWeaponAmmoCount(weaponEnt.ClassName, weaponEnt["count"]);
-			if (float.Parse(count) < 0)
+			if (float.Parse(count, CultureInfo.InvariantCulture) < 0)
 				return;
 
 			var ammoType = GetWeaponAmmoType(weaponEnt.ClassName);
@@ -1096,7 +1097,7 @@ namespace BSPConvert.Lib
 				return;
 
 			var count = ConvertAmmoCount(ammoEnt.ClassName, ammoEnt["count"]);
-			if (float.Parse(count) < 0)
+			if (float.Parse(count, CultureInfo.InvariantCulture) < 0)
 				ammoOutput = ammoOutput.Replace("Add", "Set"); // Applies infinite ammo when count is set to a negative value to mimic q3 behaviour
 
 			var connection = new Entity.EntityConnection()
@@ -1380,7 +1381,7 @@ namespace BSPConvert.Lib
 
 		private void ConvertAngles(Entity entity)
 		{
-			if (float.TryParse(entity["angle"], out var angle))
+			if (float.TryParse(entity["angle"], CultureInfo.InvariantCulture, out var angle))
 			{
 				entity.Angles = new Vector3(0f, angle, 0f);
 				entity.Remove("angle");
