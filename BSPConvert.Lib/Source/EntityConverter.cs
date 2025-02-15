@@ -1,4 +1,4 @@
-﻿using LibBSP;
+using LibBSP;
 using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
@@ -212,7 +212,7 @@ namespace BSPConvert.Lib
 				speed = 100;
 			
 			funcRotating["spawnflags"] = "1";
-			funcRotating["maxspeed"] = speed.ToString();
+			funcRotating["maxspeed"] = speed.ToString(CultureInfo.InvariantCulture);
 		}
 
 		private void ConvertFuncStatic(Entity funcStatic)
@@ -240,7 +240,7 @@ namespace BSPConvert.Lib
 				CreatePlatTrigger(entity);
 			}
 			entity.ClassName = "func_door";
-			entity["lip"] = moveDistance.ToString();
+			entity["lip"] = moveDistance.ToString(CultureInfo.InvariantCulture);
 			entity["movedir"] = "-90 0 0";
 			entity["spawnpos"] = "1";
 			entity["spawnflags"] = "0";
@@ -367,7 +367,7 @@ namespace BSPConvert.Lib
 			else
 				spawnflags |= (int)FuncButtonFlags.DamageActivates;
 
-			button["spawnflags"] = spawnflags.ToString();
+			button["spawnflags"] = spawnflags.ToString(CultureInfo.InvariantCulture);
 		}
 
 		private static void SetMoveDir(Entity entity)
@@ -540,7 +540,7 @@ namespace BSPConvert.Lib
 			if (!float.TryParse(targetScore["count"], CultureInfo.InvariantCulture, out var count))
 				count = 1;
 
-			ModifyMathCounter(entity, output, "Add", count.ToString(), delay);
+			ModifyMathCounter(entity, output, "Add", count.ToString(CultureInfo.InvariantCulture), delay);
 		}
 
 		private Entity CreateLogicCase()
@@ -552,7 +552,7 @@ namespace BSPConvert.Lib
 			for (var i = 1; i <= 16; i++) // Logic_case supports 16 different outputs
 			{
 				var caseNum = $"case{i:D2}";
-				logicCase[caseNum] = (i-1).ToString(); // case01 = 0, case02 = 1 etc
+				logicCase[caseNum] = (i-1).ToString(CultureInfo.InvariantCulture); // case01 = 0, case02 = 1 etc
 			}
 
 			var connection = new Entity.EntityConnection()
@@ -609,7 +609,7 @@ namespace BSPConvert.Lib
 			if (spawnflags.HasFlag(TargetFragsFilterFlags.Reset)) // Reset frags to 0
 				ModifyMathCounter(targetFragsFilter, "OnTrigger", "SetValue", "0", delay);
 			else if (spawnflags.HasFlag(TargetFragsFilterFlags.Remover)) // Remove frags when used
-				ModifyMathCounter(targetFragsFilter, "OnTrigger", "Subtract", frags.ToString(), delay);
+				ModifyMathCounter(targetFragsFilter, "OnTrigger", "Subtract", frags.ToString(CultureInfo.InvariantCulture), delay);
 
 			if (spawnflags.HasFlag(TargetFragsFilterFlags.Match))
 				match = true;
@@ -848,7 +848,7 @@ namespace BSPConvert.Lib
 
 		private string RemoveFirstOccurrence(string noise, string removeStr)
 		{
-			if (!noise.StartsWith(removeStr))
+			if (!noise.StartsWith(removeStr, StringComparison.Ordinal))
 				return noise;
 			
 			return noise.Remove(0, removeStr.Length);
@@ -867,7 +867,7 @@ namespace BSPConvert.Lib
 			if (q3flags.HasFlag(TargetSpeakerFlags.Global) || q3flags.HasFlag(TargetSpeakerFlags.Activator))
 				sourceflags |= (int)AmbientGenericFlags.InfiniteRange;
 
-			targetSpeaker["spawnflags"] = sourceflags.ToString();
+			targetSpeaker["spawnflags"] = sourceflags.ToString(CultureInfo.InvariantCulture);
 		}
 
 		private void FireTargetInitOnOutput(Entity entity, Entity targetInit, string output, float delay)
@@ -911,7 +911,7 @@ namespace BSPConvert.Lib
 
 		private void ConvertKillTrigger(Entity trigger)
 		{
-			if (!trigger.ClassName.StartsWith("trigger"))
+			if (!trigger.ClassName.StartsWith("trigger", StringComparison.Ordinal))
 				return;
 
 			trigger.ClassName = "trigger_teleport";
@@ -921,7 +921,7 @@ namespace BSPConvert.Lib
 
 		private void ConvertTimerTrigger(Entity trigger, string className, int zoneNumber)
 		{
-			if (ignoreZones || !trigger.ClassName.StartsWith("trigger"))
+			if (ignoreZones || !trigger.ClassName.StartsWith("trigger", StringComparison.Ordinal))
 				return;
 
 			var newTrigger = new Entity();
@@ -929,7 +929,7 @@ namespace BSPConvert.Lib
 			newTrigger.ClassName = className;
 			newTrigger.Model = trigger.Model;
 			newTrigger.Spawnflags = 1;
-			newTrigger["zone_number"] = zoneNumber.ToString();
+			newTrigger["zone_number"] = zoneNumber.ToString(CultureInfo.InvariantCulture);
 
 			sourceEntities.Add(newTrigger);
 		}
@@ -954,9 +954,9 @@ namespace BSPConvert.Lib
 						SetQuadOnOutput(entity, ConvertPowerupCount(target["count"]), output, delay + 0.008f); //hack to make giving quad happen after target_init strip
 						break;
 					default:
-						if (target.ClassName.StartsWith("weapon_"))
+						if (target.ClassName.StartsWith("weapon_", StringComparison.Ordinal))
 							GiveWeaponOnOutput(entity, target, output, delay);
-						else if (target.ClassName.StartsWith("ammo_"))
+						else if (target.ClassName.StartsWith("ammo_", StringComparison.Ordinal))
 							GiveAmmoOnOutput(entity, target, output, delay);
 						break;
 				}
@@ -1251,11 +1251,11 @@ namespace BSPConvert.Lib
 
 		private void ConvertEquipment(Entity entity)
 		{
-			if (entity.ClassName.StartsWith("weapon_"))
+			if (entity.ClassName.StartsWith("weapon_", StringComparison.Ordinal))
 				ConvertWeapon(entity);
-			else if (entity.ClassName.StartsWith("ammo_"))
+			else if (entity.ClassName.StartsWith("ammo_", StringComparison.Ordinal))
 				ConvertAmmo(entity);
-			else if (entity.ClassName.StartsWith("item_"))
+			else if (entity.ClassName.StartsWith("item_", StringComparison.Ordinal))
 				ConvertItem(entity);
 		}
 
